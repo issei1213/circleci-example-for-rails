@@ -9,10 +9,11 @@ jobs:
         RAILS_ENV: test
     - image: circleci/mysql:5.7-ram
       environment:
-        MYSQL_DATABASE: circleci-example-for-rails_test
         MYSQL_ALLOW_EMPTY_PASSWORD: true
-        MYSQL_ROOT_HOST: '%'
         MYSQL_USER: root
+        MYSQL_DATABASE: circleci-example-for-rails_test
+        MYSQL_ROOT_HOST: "%"
+        MYSQL_PORT: 3306
     # working_directoryは、処理を実行するディレクトリを指定する(リポジトリ名もしくはプロジェクト名と同じにするのが慣例)
     working_directory: ~/circleci-example-for-rails
     # stepsは、コンテナ内で実行される処理の一つ一つをまとめたもので、stepはその一つ一つの処理のこと(ジョブを定義する際には必ずstepsもセットで定義する必要がある)
@@ -40,7 +41,7 @@ jobs:
     - run:
         name: Prepare db
         command: |
-          bundle exec rails db:schema:load --trace
+          bin/rails db:schema:load --trace
     # run tests!
     - run:
         name: Run rspec
