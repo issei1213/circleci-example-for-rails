@@ -6,7 +6,7 @@ RSpec.describe Article, type: :model do
       let(:user) { create(:user) }
       let(:article) { create(:article, user_id: user.id) }
       it "関連するuserのレコードが取得できること" do
-        expect(article.user_id).to eq(user.id)
+        expect(articlel.user_id).to eq(user.id)
       end
     end
   end
