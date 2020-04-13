@@ -1,7 +1,9 @@
 version: 2.1
 jobs:
   build:
+    # Circle CIはdocker上で動かす事できる
     docker:
+      # Docker HubのimageをPullする
     - image: circleci/ruby:2.6.1-node
       environment:
         RAILS_ENV: test
@@ -11,19 +13,26 @@ jobs:
         MYSQL_ALLOW_EMPTY_PASSWORD: true
         MYSQL_ROOT_HOST: '%'
         MYSQL_USER: root
+    # working_directoryは、処理を実行するディレクトリを指定する(リポジトリ名もしくはプロジェクト名と同じにするのが慣例)
     working_directory: ~/circleci-example-for-rails
+    # stepsは、コンテナ内で実行される処理の一つ一つをまとめたもので、stepはその一つ一つの処理のこと(ジョブを定義する際には必ずstepsもセットで定義する必要がある)
     steps:
+      # check_outは、連携したGitHubのリポジトリからビルドしたコンテナ内にソースコードをコピーします
     - checkout
+    # restore_cacheは、save_cacheされたキャッシュを復元させる機能。
     - restore_cache:
         keys:
         - v1-dependencies-{{ checksum "Gemfile.lock" }}
         - v1-dependencies-
+    # runは、実行させたい処理(フレームワーク独自のコマンドやライブラリのインストールなど)を具体的に記述する
     - run:
         name: install dependencies
         command: |
           gem install bundler -v 2.0.1
           bundle install --jobs=4 --retry=3 --path vendor/bundle
+    # CircleCIではジョブ内で実行したstepをキャッシュとして保存できるsave_cacheという機能があ
     - save_cache:
+        # pathオプションでキャッシュ対象のファイル群があるpathを指定
         paths:
         - ./vendor/bundle
         key: v1-dependencies-{{ checksum "Gemfile.lock" }}
@@ -41,8 +50,10 @@ jobs:
           bundle exec rspec --format progress --color --format documentation
 
     # collect reports
+    # store_test_resultsは、RSpecなどのテストを実行した際の結果をCircleCI上にアップロードする機能
     - store_test_results:
         path: /tmp/test-results
+    # store_artifictsは、ログデータなどをCircleCI上にアップロードする機能。
     - store_artifacts:
         path: /tmp/test-results
         destination: test-results
