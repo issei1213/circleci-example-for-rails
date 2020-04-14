@@ -80,13 +80,13 @@ jobs:
                               --format progress \
                               --format RspecJunitFormatter \
                               --out ~/rspec/rspec.xml
-       # collect reports
+      # collect reports
       - store_test_results:
           path: ~/rspec
       - store_artifacts:
           path: ~/tmp/test-results
           destination: test-results
-workflows:
+workflow:
 build:
   jobs:
     - fetch_source_code
